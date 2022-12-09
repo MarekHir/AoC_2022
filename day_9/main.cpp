@@ -25,7 +25,7 @@ void move_tail(const knot &head, knot &tail){
             tail.pos_y++;
             tail.pos_x--;
         }
-        if(head.pos_y < tail.pos_y && head.pos_x > tail.pos_x){
+        else if(head.pos_y < tail.pos_y && head.pos_x > tail.pos_x){
             tail.pos_y--;
             tail.pos_x++;
         }
@@ -33,6 +33,7 @@ void move_tail(const knot &head, knot &tail){
             tail.pos_y--;
             tail.pos_x--;
         }
+        return;
     }
 
     if(abs(abs(head.pos_y) - abs(tail.pos_y)) == 1 && head.pos_x == tail.pos_x ||
@@ -57,8 +58,9 @@ int main() {
     ifstream input("../day_9/input.txt");
     stringstream ss;
 
+    int tail_count = 9;
     set<string> visited;
-    knot head, tail;
+    knot head, tail[tail_count];
 
     if (input.is_open()) {
         while (getline(input, line)) {
@@ -80,8 +82,12 @@ int main() {
                         head.pos_y++;
                         break;
                 }
-                move_tail(head, tail);
-                visited.insert(to_string(tail.pos_x) + ':' + to_string(tail.pos_y));
+                move_tail(head, tail[0]);
+                for(int j = 1; j < tail_count; j++) {
+                    move_tail(tail[j - 1], tail[j]);
+                }
+
+                visited.insert(to_string(tail[8].pos_x) + ':' + to_string(tail[8].pos_y));
             }
             ss.clear();
         }
