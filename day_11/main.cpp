@@ -3,6 +3,8 @@
 #include <list>
 #include <sstream>
 #include <queue>
+#include <numeric>
+
 
 #define num_of_monkeys 8
 
@@ -13,7 +15,7 @@ using namespace std;
 struct monkey{
     int index;
     int inspect_count = 0;
-    queue<int> items;
+    queue<unsigned long long int> items;
 };
 
 struct group{
@@ -41,52 +43,51 @@ void ini_monkeys(group &monkeys){
     }
 }
 
-void monkey_check_t(const int &monkey_num, int &item){
-    switch(monkey_num){
-        case 0:
-            item *= 19;
-            break;
-        case 1:
-            item += 6;
-            break;
-        case 2:
-            item *= item;
-            break;
-        case 3:
-            item += 3;
-            break;
-        default:
-            cout << "Uncovered path in monkey_check switch" << endl;
-            exit(-1);
-    }
-    item /= 3;
-}
+//void monkey_check(const int &monkey_num, unsigned long long int &item){
+//    switch(monkey_num){
+//        case 0:
+//            item *= 19;
+//            break;
+//        case 1:
+//            item += 6;
+//            break;
+//        case 2:
+//            item *= item;
+//            break;
+//        case 3:
+//            item += 3;
+//            break;
+//        default:
+//            cout << "Uncovered path in monkey_check switch" << endl;
+//            exit(-1);
+//    }
+//}
+//
+//int monkey_throw(const int &monkey_num, unsigned long long int &item){
+//    switch(monkey_num){
+//        case 0:
+//            if(item % 23 == 0)
+//                return 2;
+//            return 3;
+//        case 1:
+//            if(item % 19 == 0)
+//                return 2;
+//            return 0;
+//        case 2:
+//            if(item % 13 == 0)
+//                return 1;
+//            return 3;
+//        case 3:
+//            if(item % 17 == 0)
+//                return 0;
+//            return 1;
+//        default:
+//            cout << "Uncovered path in monkey_throw switch" << endl;
+//            exit(-1);
+//    }
+//}
 
-int monkey_throw_t(const int &monkey_num, const int &item){
-    switch(monkey_num){
-        case 0:
-            if(item % 23 == 0)
-                return 2;
-            return 3;
-        case 1:
-            if(item % 19 == 0)
-                return 2;
-            return 0;
-        case 2:
-            if(item % 13 == 0)
-                return 1;
-            return 3;
-        case 3:
-            if(item % 17 == 0)
-                return 0;
-            return 1;
-        default:
-            cout << "Uncovered path in monkey_throw switch" << endl;
-            exit(-1);
-    }
-}
-
-void monkey_check(const int &monkey_num, int &item){
+void monkey_check(const int &monkey_num, unsigned long long int &item){
     switch(monkey_num){
         case 0:
             item *= 3;
@@ -116,10 +117,9 @@ void monkey_check(const int &monkey_num, int &item){
             cout << "Uncovered path in monkey_check switch" << endl;
             exit(-1);
     }
-    item /= 3;
 }
 
-int monkey_throw(const int &monkey_num, const int &item){
+int monkey_throw(const int &monkey_num, const unsigned long long int &item){
     switch(monkey_num){
         case 0:
             if(item % 13 == 0)
@@ -162,20 +162,35 @@ int monkey_throw(const int &monkey_num, const int &item){
 int main() {
     group monkeys;
     ini_monkeys(monkeys);
-    for(int i = 0; i < 20; i++){
+    unsigned long long int lcm = 1;
+//    int numbers[] {23, 19, 13, 17};
+    int numbers[] {13, 3, 7, 2, 19, 5, 11, 17};
+    // Today, I became a bit smarter
+    for(int i : numbers){
+        lcm *= i;
+    }
+
+    for(int i = 0; i < 10000;){
         for(monkey &monk : monkeys.monkeys){
             while(!monk.items.empty()){
-                int item = monk.items.front();
+                unsigned long long int item = monk.items.front();
                 monk.items.pop();
                 monkey_check(monk.index, item);
+                item %= lcm;
                 monk.inspect_count++;
                 monkeys.monkeys[monkey_throw(monk.index, item)].items.push(item);
             }
         }
+        i++;
+        if(i == 1 || i == 20 || (i != 0 && i % 1000 == 0)) {
+            cout << "Round: " << i << endl;
+            for (monkey &monk: monkeys.monkeys) {
+                cout << monk.inspect_count << " " << (monk.items.empty() ? 69 : monk.items.front()) << endl;
+            }
+        }
     }
-    int first = 0, second = 0;
+    unsigned long long int first = 0, second = 0;
     for(monkey &monk : monkeys.monkeys){
-        cout << monk.inspect_count << endl;
         if(monk.inspect_count > second) {
             if (monk.inspect_count > first) {
                 second = first;

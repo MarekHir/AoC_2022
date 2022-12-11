@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 project(advent_of_code_2022)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 add_executable(day_1 day_1/main.cpp)
 add_executable(day_2 day_2/main.cpp)
