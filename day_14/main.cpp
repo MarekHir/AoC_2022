@@ -7,6 +7,7 @@
 
 
 #define NORMALIZE_CONST 0
+#define X_EXTEND 500
 
 
 using namespace std;
@@ -72,12 +73,13 @@ int main() {
       first_pair = true;
       s.clear();
     }
+    map.resize(map.size() + 2);
+    map.at(map.size() - 1).insert(map.at(map.size() - 1).begin(), size_x + X_EXTEND, 1);
+
     y = 0;
     x = 500 - NORMALIZE_CONST;
     num_of_grains++;
     while (true) {
-      if (y + 1 >= map.size())
-        break;
 
       if (map.at(y + 1).size() <= x || map.at(y + 1).at(x) == 0) {
         y++;
@@ -88,9 +90,6 @@ int main() {
         x--;
         continue;
       }
-      if (size_x <= x + 1) {
-        break;
-      }
       if (map.at(y + 1).size() <= x + 1 || map.at(y + 1).at(x + 1) == 0) {
         y++;
         x++;
@@ -98,6 +97,9 @@ int main() {
       }
 
       // Create new grain
+      if(map.at(0).size() >= 501 && map.at(0).at(500) == 2){
+        break;
+      }
       if(map.at(y).size() <= x)
         map.at(y).resize(x + 1);
       map.at(y).at(x) = 2;
